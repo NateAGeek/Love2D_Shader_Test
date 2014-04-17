@@ -1,0 +1,12 @@
+extern vec2 lightpos;
+extern vec3 lightAttenuation;
+uniform vec4 lightColor;
+
+vec4 effect(vec4 color, Image texture, vec2 texture_coords, vec2 pixel_coords) {
+  pixel_coords.y = love_ScreenSize-pixel_coords.y;
+  vec2 aux = lightpos-pixel_coords;
+  number distance = length(aux);
+  number attenuation = 1.0 / (lightAttenuation.x+lightAttenuation.y*distance+lightAttenuation.z*distance*distance);
+  vec4 Outcolor = vec4(attenuation, attenuation, attenuation, 1.0)*lightColor;
+  return Outcolor;
+}
