@@ -1,12 +1,36 @@
-extern vec2 lightpos;
-extern vec3 lightAttenuation;
-uniform vec4 lightColor;
+const number PI = 3.1415926535;
+
+extern number aperture;
+
 
 vec4 effect(vec4 color, Image texture, vec2 texture_coords, vec2 pixel_coords) {
-  pixel_coords.y = love_ScreenSize-pixel_coords.y;
-  vec2 aux = lightpos-pixel_coords;
-  number distance = length(aux);
-  number attenuation = 1.0 / (lightAttenuation.x+lightAttenuation.y*distance+lightAttenuation.z*distance*distance);
-  vec4 Outcolor = vec4(attenuation, attenuation, attenuation, 1.0)*lightColor;
-  return Outcolor;
+  number apertureHalf = 0.5 * aperture * (PI / 180.0);
+
+  // This factor ajusts the coordinates in the case that
+  // the aperture angle is less than 180 degrees, in which
+  // case the area displayed is not the entire half-sphere.
+  number maxFactor = sin(apertureHalf);
+
+  vec2 pos = 2.0 * texture_coords - 1.0;
+
+  number l = length(pos);
+  if (l > 1.0) {
+    return vec4(0.0);
+  } else {
+    number x = maxFactor * pos.x;
+    number y = maxFactor * pos.y;
+
+    number n = length(vec2(x, y));
+
+    number z = sqrt(1.0 - n * n);
+
+    number r = atan(n, z) / PI;
+
+    number phi = atan(y, x);
+
+    number u = r * cos(phi) + 0.5;
+    number v = r * sin(phi) + 0.5;
+
+    return Texel(texture, vec2(u, v)) * color;
+  }
 }

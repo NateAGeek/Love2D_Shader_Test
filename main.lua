@@ -1,5 +1,6 @@
 local Quad = love.graphics.newQuad
 function love.load()
+    x = 0.0;
     Player = {
         x = 0;
         y = 0;
@@ -10,6 +11,7 @@ function love.load()
 
 
     Timy = love.graphics.newImage("GFX/Timy.png")
+    Anon = love.graphics.newImage("GFX/anon.jpg")
     Timy:setFilter("nearest", "nearest")
     TimyQuadMap = {
         Quad(0, 0, 32, 32, Timy:getWidth(), Timy:getHeight()),
@@ -22,6 +24,8 @@ function love.load()
 end
 
 function love.update(dt)
+
+
     if love.keyboard.isDown('d', 'right') then
         Player['x'] = Player['x'] + Player['speed']
     end
@@ -34,17 +38,17 @@ function love.update(dt)
     if love.keyboard.isDown('w', 'up') then
         Player['y'] = Player['y'] - Player['speed']
     end
-    shader:send("lightpos", {love.mouse.getX(), love.mouse.getY()+200})
-    shader:send("lightAttenuation", {5.0, 5.0, 0.1})
-    shader:send("lightColor", {255.0, 255.0, 255.0, 0.99})
+
+    shader:send("aperture", 180.0)
 
 end
 
 function love.draw()
-    --love.graphics.setBackgroundColor(255, 200, 100)
+    love.graphics.setBackgroundColor(255, 200, 100)
     love.graphics.setShader(shader)
-    love.graphics.rectangle('fill', 0, 0, 1000, 1000)
+    --love.graphics.rectangle('fill', 0, 0, 1000, 1000)
+    --love.graphics.draw(Timy, TimyQuadMap[1], Player['x'], Player['y'], 0, 4, 4)
+    love.graphics.draw(Anon, Player['x'], Player['y'], 0, .5, .5);
     love.graphics.setShader()
-    love.graphics.draw(Timy, TimyQuadMap[1], Player['x'], Player['y'], 0, 4, 4)
 
 end
